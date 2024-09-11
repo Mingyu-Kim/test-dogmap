@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "583885436051",
+    "project_id": "dogmap-project",
+    "storage_bucket": "dogmap-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:583885436051:android:16a516db9e2f36d3ee4966",
+        "android_client_info": {
+          "package_name": "com.example.dogmap"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_7mkdgKgfqS5nRizmu7fXumKUNkQGb1Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

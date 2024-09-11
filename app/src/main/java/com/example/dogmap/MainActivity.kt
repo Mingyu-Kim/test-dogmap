@@ -28,7 +28,11 @@ import com.google.maps.android.compose.Marker
 import com.google.maps.android.compose.MarkerState
 import com.google.android.gms.location.LocationRequest
 import android.os.Looper
-
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.android.gms.maps.GoogleMap
+import com.google.android.gms.maps.OnMapReadyCallback
+import com.google.android.gms.maps.SupportMapFragment
+import com.google.android.gms.maps.model.MarkerOptions
 
 class MainActivity : ComponentActivity() {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
@@ -93,10 +97,14 @@ fun MapScreen(
     fusedLocationClient: FusedLocationProviderClient
 ) {
     var currentLocation by remember { mutableStateOf<LatLng?>(null) }
+    var places by remember { mutableStateOf<List<Place>>(emptyList()) }
+
     val cameraPositionState = rememberCameraPositionState()
     // context는 @Composable 함수 내부에서 미리 가져옵니다
     val context = LocalContext.current
 
+    // Firestore 인스턴스 가져오기
+    val db = FirebaseFirestore.getInstance()
 
     // LocationRequest 설정
     val locationRequest = com.google.android.gms.location.LocationRequest.create().apply {
@@ -106,6 +114,27 @@ fun MapScreen(
     }
 
     LaunchedEffect(Unit) {
+        db.collection("places").get()
+            .addOnSuccessListener { result ->
+                val fetchedPlaces = result.map { document ->
+                    Place(
+                        name = document.getString("name") ?: "",
+                        latitude = document.getDouble("latitude") ?: 0.0,
+                        longitude = document.getDouble("longitude") ?: 0.0,
+                        address = document.getString("address") ?: "주소 없음",
+                        price = document.getString("price") ?: "가격 정보 없음",
+                        category = document.getString("category") ?: "카테고리 없음"
+                    )
+                }
+                places = fetchedPlaces
+            }
+            .addOnFailureListener {
+                Toast.makeText(context, "장소 데이터를 불러오는데 실패했습니다.", Toast.LENGTH_SHORT).show()
+            }
+
+
+
+
         // 위치 권한이 있는지 확인
         if (ContextCompat.checkSelfPermission(
                 context,
@@ -144,6 +173,26 @@ fun MapScreen(
                 title = "내 위치"
             )
         }
+// Firestore에서 불러온 장소에 마커 표시
+        places.forEach { place ->
+            Marker(
+                state = MarkerState(position = LatLng(place.latitude, place.longitude)),
+                title = place.name,
+                snippet = "카테고리: ${place.category}"
+            )
+        }
+
+
+
     }
 }
 
+// 장소 데이터를 담는 데이터 클래스
+data class Place(
+    val name: String,
+    val latitude: Double,
+    val longitude: Double,
+    val address: String,   // 주소 추가
+    val price: String,      // 가격 정보 추가
+    val category: String
+)

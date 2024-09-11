@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("kotlin-android")
     id("org.jetbrains.kotlin.android") version "1.9.0"
+    id("com.google.gms.google-services")  // Firebase용 Google 서비스 플러그인 추가
 }
 
 android {
@@ -60,6 +61,9 @@ dependencies {
     implementation("androidx.compose.material3:material3:1.3.0")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.0")
     debugImplementation("androidx.compose.ui:ui-tooling:1.7.0")
+    implementation("com.google.firebase:firebase-firestore:25.1.0")
+    implementation(platform("com.google.firebase:firebase-bom:33.2.0"))
+    implementation("com.google.firebase:firebase-analytics")
 
 
     implementation(libs.androidx.core.ktx)
